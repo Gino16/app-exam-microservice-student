@@ -1,17 +1,11 @@
 package com.exams.microservices.appexamusers.services;
 
-import com.exams.microservices.appexamusers.models.entities.Student;
-import io.reactivex.rxjava3.core.Maybe;
-import io.reactivex.rxjava3.core.Single;
-import java.util.Optional;
+import com.exams.microservices.libcommonmicroservices.services.GenericService;
+import com.exams.microservices.libcommonstudents.models.entities.Student;
+import java.util.List;
 
 
-public interface StudentService {
-    public Iterable<Student> findAll();
+public interface StudentService extends GenericService<Student> {
+  public List<Student> findByNameOrLastname(String name);
 
-    public Optional<Student> findById(Long id);
-
-    public Student save(Student student);
-
-    public void deleteById(Long id);
 }

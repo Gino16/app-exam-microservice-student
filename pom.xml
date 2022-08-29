@@ -62,6 +62,18 @@
 			<version>3.1.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.exams.microservices</groupId>
+			<artifactId>lib-common-microservices</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.exams.microservices</groupId>
+			<artifactId>lib-common-students</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 
 	</dependencies>
 

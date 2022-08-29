@@ -1,9 +1,11 @@
 package com.exams.microservices.appexamusers.controllers;
 
-import com.exams.microservices.appexamusers.models.entities.Student;
 import com.exams.microservices.appexamusers.services.StudentService;
+import com.exams.microservices.libcommonmicroservices.controllers.GenericController;
+import com.exams.microservices.libcommonmicroservices.services.GenericService;
+import com.exams.microservices.libcommonstudents.models.entities.Student;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,31 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
-public class StudentController {
+public class StudentController extends GenericController<StudentService, Student> {
 
-  private StudentService studentService;
-
-  @GetMapping
-  public ResponseEntity<?> list() {
-    return ResponseEntity.ok().body(studentService.findAll());
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<?> findById(@PathVariable("id") Long id) {
-    Optional<Student> o = studentService.findById(id);
-
-    return o.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(o.get());
-  }
-
-  @PostMapping
-  public ResponseEntity<?> save(@RequestBody Student student) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(studentService.save(student));
+  public StudentController(StudentService service) {
+    super(service);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<?> edit(@RequestBody Student student, @PathVariable Long id) {
-    Optional<Student> o = studentService.findById(id);
+    Optional<Student> o = this.service.findById(id);
 
     if (o.isEmpty()) {
       return ResponseEntity.notFound().build();
@@ -49,12 +35,12 @@ public class StudentController {
     studentDb.setName(student.getName());
     studentDb.setLastname(student.getLastname());
     studentDb.setEmail(student.getEmail());
-    return ResponseEntity.status(HttpStatus.CREATED).body(studentService.save(studentDb));
+    return ResponseEntity.status(HttpStatus.CREATED).body(this.service.save(studentDb));
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> delete(@PathVariable Long id) {
-    studentService.deleteById(id);
-    return ResponseEntity.noContent().build();
+  @GetMapping("/filter/{name}")
+  public ResponseEntity<?> filterByName(@PathVariable String name) {
+    return ResponseEntity.ok().body(this.service.findByNameOrLastname(name));
   }
+
 }
