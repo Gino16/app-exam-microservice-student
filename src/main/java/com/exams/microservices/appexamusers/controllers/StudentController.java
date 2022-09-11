@@ -6,6 +6,7 @@ import com.exams.microservices.appexamusers.services.StudentService;
 import com.exams.microservices.appexamusers.utils.S3Util;
 import com.exams.microservices.libcommonmicroservices.controllers.GenericController;
 import com.exams.microservices.libcommonstudents.models.entities.Student;
+import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,11 @@ public class StudentController extends GenericController<StudentService, Student
 
   public StudentController(StudentService service, AmazonS3Client amazonS3Client) {
     super(service);
+  }
+
+  @GetMapping("/students-by-course")
+  public ResponseEntity<?> getStudentsByCourse(@RequestParam List<Long> ids) {
+    return ResponseEntity.ok(this.service.findAllByIds(ids));
   }
 
   @PutMapping("/{id}")

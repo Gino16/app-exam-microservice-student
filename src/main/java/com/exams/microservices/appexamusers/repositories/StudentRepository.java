@@ -7,6 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface StudentRepository extends PagingAndSortingRepository<Student, Long> {
 
-  @Query("SELECT s FROM Student s WHERE s.name LIKE %?1% OR s.lastname LIKE %?1%")
+  @Query("SELECT s FROM Student s WHERE UPPER(s.name) LIKE UPPER(CONCAT('%',?1,'%') ) OR UPPER(s.lastname) LIKE UPPER(CONCAT('%',?1,'%'))")
   public List<Student> findByNameOrLastname(String name);
 }

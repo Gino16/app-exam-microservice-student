@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.exams.microservices.appexamusers.clients.CourseFeignClient;
 import com.exams.microservices.appexamusers.models.entities.Asset;
 import com.exams.microservices.appexamusers.repositories.StudentRepository;
 import com.exams.microservices.appexamusers.services.StudentService;
@@ -27,15 +28,25 @@ public class StudentServiceImpl extends GenericServiceImpl<Student, StudentRepos
 
   private final AmazonS3Client amazonS3Client;
 
-  public StudentServiceImpl(StudentRepository repository, AmazonS3Client amazonS3Client) {
+  private final CourseFeignClient courseFeignClient;
+
+  public StudentServiceImpl(StudentRepository repository, AmazonS3Client amazonS3Client, CourseFeignClient
+      courseFeignClient) {
     super(repository);
     this.amazonS3Client = amazonS3Client;
+    this.courseFeignClient = courseFeignClient;
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<Student> findByNameOrLastname(String name) {
     return this.repository.findByNameOrLastname(name);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Iterable<Student> findAllByIds(Iterable<Long> ids) {
+    return this.repository.findAllById(ids);
   }
 
   @Override
@@ -80,5 +91,17 @@ public class StudentServiceImpl extends GenericServiceImpl<Student, StudentRepos
   @Override
   public void deletePhoto(String filename) {
     amazonS3Client.deleteObject(S3Util.BUCKET_NAME, filename);
+  }
+
+  @Override
+  public void deleteStudent(Long idStudent) {
+    this.courseFeignClient.deleteStudent(idStudent);
+  }
+
+  @Override
+  @Transactional
+  public void deleteById(Long id) {
+    super.deleteById(id);
+    this.deleteStudent(id);
   }
 }

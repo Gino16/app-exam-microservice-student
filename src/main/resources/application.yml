@@ -6,6 +6,7 @@ spring:
   cloud:
     config:
       profile: dev
+      label: db-per-service
     aws:
       region:
         static: us-east-1
